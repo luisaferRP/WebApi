@@ -21,10 +21,17 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    //se agrega esto para que cuando se compile y ejecute de una entre a el swagger
+      app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.RoutePrefix = string.Empty; // Para que Swagger UI sea la página principal
+    });
+    //app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+app.MapControllers(); //Agregue: controladores mapeados
 
 var summaries = new[]
 {

@@ -29,8 +29,8 @@ namespace WebApi.Controllers
     }
 
     //Traer un solo dato dependiendo de el id
-    [HttpGet("{id}",Name = "GetProducto")]
-    public async Task<ActionResult<Producto>> GetProductos(int id)
+    [HttpGet("{id}", Name = "GetProducto")]
+    public async Task<ActionResult<Producto>> GetProducto(int id)
     {
         var producto = await _context.Productos.FindAsync(id);
 
@@ -47,12 +47,14 @@ namespace WebApi.Controllers
     public async Task<ActionResult<Producto>> Post(Producto producto)
     {
         //agregar a la tabla
-        _context.Add(producto);
+        _context.Productos.Add(producto);
+         System.Console.Write("aca");
         //salvamos cambios
         await _context.SaveChangesAsync();
 
         //resultado de accion devuleve una respuesta Http con codigo 201 que es created
-        return new CreatedAtRouteResult("GetProducto",new {id = producto.Id} , producto);
+        return CreatedAtAction(nameof(GetProducto), new { id = producto.Id }, producto);
+        //return new CreatedAtRouteResult("GetProducto", new {id = producto.Id} , producto);
     }
 
     //put (actualizar)
@@ -78,7 +80,7 @@ namespace WebApi.Controllers
     [HttpDelete("{id}")]
     public async Task<ActionResult<Producto>> Delete(int id)
     {
-        var producto = await _context.Productos.FindAsync();
+        var producto = await _context.Productos.FindAsync(id);
 
         if(producto == null)
         {
