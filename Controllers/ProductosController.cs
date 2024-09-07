@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
 using WebApi.Models;
+//para manejar el hashing de la contraseña.
+using Microsoft.AspNetCore.Identity;
 
 namespace WebApi.Controllers
 {
@@ -46,15 +48,27 @@ namespace WebApi.Controllers
     [HttpPost]
     public async Task<ActionResult<Producto>> Post(Producto producto)
     {
-        //agregar a la tabla
+
+        //aplicar hashing 256 antes de guardar,(encriptacion de contraseña)
+        // if(!string.IsNullOrEmpty(producto.Descripcion)){
+        //     producto.Descripcion = Encrypt.GetSHA256(producto.Descripcion);
+        // }
+
+        //hashear contraseña con passwordHasher de asp.net core
+        var passwordHasher = new PasswordHasher<Producto>();
+        producto.Descripcion = passwordHasher.HashPassword(producto, producto.Descripcion);
+        //verificar contraseña en este caso descripcion------------------------------------
+        // var passwordHasher = new PasswordHasher<Usuario>();
+        // // Verificamos la contraseña
+        // var resultado = passwordHasher.VerifyHashedPassword(producto, producto.Descripcion, loginRequest.Contraseña);
+    
+
         _context.Productos.Add(producto);
-         System.Console.Write("aca");
         //salvamos cambios
         await _context.SaveChangesAsync();
 
         //resultado de accion devuleve una respuesta Http con codigo 201 que es created
         return CreatedAtAction(nameof(GetProducto), new { id = producto.Id }, producto);
-        //return new CreatedAtRouteResult("GetProducto", new {id = producto.Id} , producto);
     }
 
     //put (actualizar)
