@@ -57,7 +57,7 @@ namespace WebApi.Controllers
 
     //put (actualizar)
 
-    [HttpPut]
+    [HttpPut("{id}")]
     public async Task<ActionResult> Put(int id,Producto producto)
     {
         if(id != producto.Id)
